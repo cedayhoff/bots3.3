@@ -74,7 +74,9 @@ LOCALE_PATHS = (
 
 #*********path settings*************************
 STATIC_URL = '/media/'
+MEDIA_URL = ''
 STATIC_ROOT = PROJECT_PATH + '/'
+MEDIA_ROOT = PROJECT_PATH + '/media/'
 ROOT_URLCONF = 'bots.urls'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home'

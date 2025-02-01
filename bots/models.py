@@ -5,6 +5,7 @@ import re
 from django.db import models
 from django.core.validators import validate_integer
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 from . import botsglobal
 from . import validate_email
 ''' Declare database tabels.
@@ -168,16 +169,21 @@ def script_link1(script,linktext):
     if os.path.exists(script):
         return '<a href="/srcfiler/?src=%s" target="_blank">%s</a>'%(urllib_quote(script.encode("utf-8")),linktext)
     else:
-        return '<img src="/media/admin/img/icon-no.gif"></img> %s'%linktext
+        return mark_safe(
+            '<img src="/media/admin/img/icon-no.gif"></img>'
+        )
 
 def script_link2(script):
-    ''' if script exists return "yes" icon + view link; else return "no" icon
-        used in routes, channels (scripts are optional)
-    '''
     if os.path.exists(script):
-        return '<a class="nowrap" href="/srcfiler/?src=%s" target="_blank"><img src="/media/admin/img/icon-yes.gif"></img> view</a>'%urllib_quote(script.encode("utf-8"))
+        return mark_safe(
+            '<a class="nowrap" href="/srcfiler/?src=%s" target="_blank">'
+            '<img src="/media/admin/img/icon-yes.gif"></img> view</a>'
+            % urllib_quote(script.encode("utf-8"))
+        )
     else:
-        return '<img src="/media/admin/img/icon-no.gif"></img>'
+        return mark_safe(
+            '<img src="/media/admin/img/icon-no.gif"></img>'
+        )
 
 
 class MultipleEmailField(models.CharField):
@@ -276,7 +282,6 @@ class channel(models.Model):
 
     def communicationscript(self):
         return script_link2(os.path.join(botsglobal.ini.get('directories','usersysabs'),'communicationscripts', self.idchannel + '.py'))
-    communicationscript.allow_tags = True
     communicationscript.short_description = 'User script'
 
     class Meta:
@@ -441,13 +446,21 @@ class routes(models.Model):
         return str(self.idroute) + ' ' + str(self.seq)
     def translt(self):
         if self.translateind == 0:
-            return '<img alt="%s" src="/media/admin/img/icon-no.gif"></img>'%(self.get_translateind_display())
+            return mark_safe(
+            '<img src="/media/admin/img/icon-no.gif"></img>'
+        )
         elif self.translateind == 1:
-            return '<img alt="%s" src="/media/admin/img/icon-yes.gif"></img>'%(self.get_translateind_display())
+            return mark_safe(
+            '<img src="/media/admin/img/icon-yes.gif"></img>'
+        )
         elif self.translateind == 2:
-            return '<img alt="%s" src="/media/images/icon-pass.gif"></img>'%(self.get_translateind_display())
+            return mark_safe(
+            '<img src="/media/admin/img/icon-pass.gif"></img>'
+        )
         elif self.translateind == 3:
-            return '<img alt="%s" src="/media/images/icon-pass_parse.gif"></img>'%(self.get_translateind_display())
+            return mark_safe(
+            '<img src="/media/admin/img/icon-parse.gif"></img>'
+        )
     translt.allow_tags = True
     translt.admin_order_field = 'translateind'
 
