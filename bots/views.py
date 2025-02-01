@@ -700,7 +700,7 @@ def runengine(request,*kw,**kwargs):
 
         #either bots-engine is run directly or via jobqueue-server:
         if botsglobal.ini.getboolean('jobqueue','enabled',False):   #run bots-engine via jobqueue-server; reports back if job is queued
-            import job2queue
+            from bots import job2queue
             terug = job2queue.send_job_to_jobqueue(lijst)
             messages.add_message(request, messages.INFO, job2queue.JOBQUEUEMESSAGE2TXT[terug])
             botsglobal.logger.info(job2queue.JOBQUEUEMESSAGE2TXT[terug])

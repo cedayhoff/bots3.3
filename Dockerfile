@@ -26,4 +26,4 @@ COPY . /app
 RUN python3.12 setup.py install
 
 EXPOSE 8080
-CMD ["bots-webserver.py"]
+CMD ["sh", "-c", "python3.12 bots-jobqueueserver.py & python3.12 bots-webserver.py"]
