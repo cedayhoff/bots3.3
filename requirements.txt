@@ -2,8 +2,8 @@ django==5.1.5
 cherrypy==18.10.0
 genshi==0.7.9
 paramiko==3.5.0
-pyinotify==0.9.6
 xlrd==2.0.1
 mysqlclient==2.2.7
 psycopg2==2.9.10
 configparser==7.1.0
+watchdog==6.0.0
