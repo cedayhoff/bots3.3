@@ -13,7 +13,7 @@ except ImportError:
 import cherrypy
 from . import botsglobal
 from . import botsinit
-
+import collections
 
 def start():
     #NOTE: bots directory should always be on PYTHONPATH - otherwise it will not start.
