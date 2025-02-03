@@ -25,6 +25,7 @@ RUN python3.12 -m pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /dirmonitor
 COPY . /app
 RUN python3.12 setup.py install
+RUN python3.12 manage.py migrate --fake-initial
 
 EXPOSE 8080
 

@@ -81,6 +81,7 @@ ROOT_URLCONF = 'bots.urls'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_URL = '/logout/'
+CORS_ORIGIN_ALLOW_ALL = True
 #~ LOGOUT_REDIRECT_URL = #not such parameter; is set in urls.py
 ALLOWED_HOSTS = ['*']
 
@@ -124,6 +125,7 @@ FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -141,4 +143,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.messages',
     'bots',
+    'oauth2_provider',
+    'corsheaders',
 ]

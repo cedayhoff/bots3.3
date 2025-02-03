@@ -1,5 +1,6 @@
 # bots/urls.py
 from django.urls import include, path, re_path
+from oauth2_provider import urls as oauth2_urls
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import views as auth_views
@@ -32,9 +33,10 @@ urlpatterns = [
     re_path(r'^logfiler.*', login_required(views.logfiler)),
 
     # Only staff
-    re_path(r'^admin/$', login_required(views.home)),  # block default admin root
-    re_path(r'^admin/bots/$', login_required(views.home)),  # block admin root
+    #re_path(r'^admin/$', login_required(views.home)),  # block default admin root
+    #re_path(r'^admin/bots/$', login_required(views.home)),  # block admin root
     re_path(r'^admin/', admin.site.urls),
+    path('o/', include(oauth2_urls)),
     re_path(r'^runengine.+', run_permission(views.runengine)),
 
     # Only superuser
