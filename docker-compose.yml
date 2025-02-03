@@ -1,0 +1,17 @@
+version: '3'
+services:
+  bots:
+    build:
+      context: .
+      dockerfile: Dockerfile.bots
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  cronicle:
+    build:
+      context: .
+      dockerfile: Dockerfile.cronicle
+    ports:
+      - "3012:3012"
+    restart: unless-stopped
