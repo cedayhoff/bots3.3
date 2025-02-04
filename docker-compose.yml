@@ -7,6 +7,8 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    hostname: "bots"
+    container_name: "my-bots"
 
   cronicle:
     build:
@@ -15,3 +17,5 @@ services:
     ports:
       - "3012:3012"
     restart: unless-stopped
+    hostname: "cronicle"
+    container_name: "my-cronicle"
