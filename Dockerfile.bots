@@ -18,15 +18,14 @@ RUN apt-get update && apt-get install -y \
     apt-get clean
 
 RUN python3.12 -m ensurepip --upgrade
-
 WORKDIR /app
+
 COPY requirements.txt /app/
 RUN python3.12 -m pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /dirmonitor
+
 COPY . /app
 RUN python3.12 setup.py install
-RUN python3.12 manage.py migrate --fake-initial
-
 
 RUN apt-get update && apt-get install -y \
     curl gnupg && \
@@ -38,12 +37,10 @@ RUN curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/insta
 
 COPY cronicle/config.json /opt/cronicle/conf/config.json
 
-EXPOSE 8080
-
 CMD ["sh", "-c", " \
-  python3.12 bots-jobqueueserver.py & \
-  python3.12 bots-dirmonitor.py & \
-  python3.12 bots-webserver.py & \
   /opt/cronicle/bin/control.sh start && \
   tail -F /opt/cronicle/logs/cronicle.log \
 "]
+
+
+EXPOSE 8080

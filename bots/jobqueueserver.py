@@ -5,6 +5,7 @@ import os
 import time
 import subprocess
 import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import xmlrpc.client as xmlrpclib
 from xmlrpc.server import SimpleXMLRPCServer
 
@@ -15,6 +16,24 @@ from . import botsglobal
 PRIORITY = 0
 JOBNUMBER = 1
 TASK = 2
+start_time = time.time()
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/health':
+            uptime = time.time() - start_time
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*') 
+            self.end_headers()
+            self.wfile.write(f"OK - uptime={uptime:.2f}s\n".encode())
+        else:
+            self.send_error(404)
+            
+def health():
+    # For XMLRPC
+    uptime = time.time() - start_time
+    return {"status": "OK", "uptime": uptime}
 
 class Jobqueue(object):
     def __init__(self,logger):
@@ -63,7 +82,7 @@ def action_when_time_out(logger,maxruntime,jobnumber,task_to_run):
 
 def launcher(logger,port,lauchfrequency,maxruntime):
     DEVNULL = open(os.devnull, 'wb')
-    xmlrpcclient = xmlrpclib.ServerProxy('http://localhost:' + str(port))
+    xmlrpcclient = xmlrpclib.ServerProxy('http://jobqueue:' + str(port))
     maxseconds = maxruntime * 60
     time.sleep(3)
     nr_runs_NOK = 0
@@ -143,7 +162,16 @@ def start():
     logger.info('Jobqueue launcher started.')
 
     logger.info('Jobqueue server started.')
-    server = SimpleXMLRPCServer(('localhost', port), logRequests=False)
+    
+    threading.Thread(
+        target=HTTPServer(('0.0.0.0', 8888), HealthCheckHandler).serve_forever,
+        daemon=True
+    ).start()
+    
+    server = SimpleXMLRPCServer(('0.0.0.0', port), logRequests=False)
+    server.register_instance(Jobqueue(logger))
+    server.register_function(health, 'health')
+    server.serve_forever()
     server.register_instance(Jobqueue(logger))
 
     try:

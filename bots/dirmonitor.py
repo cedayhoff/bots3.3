@@ -5,11 +5,14 @@ import os
 import fnmatch
 import threading
 import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # Bots modules
 from . import botsinit
 from . import botsglobal
 from . import job2queue
+
+start_time = time.time()
 
 '''
 monitors directories for new files.
@@ -19,6 +22,18 @@ runs as a daemon/service.
 this module contains separate implementations for linux and windows
 '''
 
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/health':
+            uptime = time.time() - start_time
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*') 
+            self.end_headers()
+            self.wfile.write(f"OK - uptime={uptime:.2f}s\n".encode())
+        else:
+            self.send_error(404)
+            
 if os.name == 'nt':
     try:
         import win32file, win32con
@@ -137,6 +152,11 @@ def start():
         -c<directory>   directory for configuration files (default: config).
 
     '''%{'name':os.path.basename(sys.argv[0]),'version':botsglobal.version}
+    threading.Thread(
+        target=HTTPServer(('0.0.0.0', 8888), HealthCheckHandler).serve_forever,
+        daemon=True
+    ).start()
+        
     configdir = 'config'
     for arg in sys.argv[1:]:
         if arg.startswith('-c'):

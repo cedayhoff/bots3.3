@@ -24,6 +24,32 @@
     <div id="environment">
         <div style="color:{{ bots_environment_text_color }}">{{ bots_environment_text }}</div>
     </div>
+    <div style="float:right; margin-right:20px;">
+        <span id="health-dirmonitor">dirmonitor: …</span> | 
+        <span id="health-jobqueue">jobqueue: …</span> | 
+        <span id="health-webserver">webserver: …</span>
+      </div>
+
+      <script>
+        // We'll replace the text with an icon (admin/img/icon-yes.gif or icon-no.gif).
+        async function checkHealth(url, elementId) {
+          const label = elementId.replace('health-', '');
+          try {
+            const r = await fetch(url);
+            const icon = r.ok ? 'icon-yes.gif' : 'icon-no.gif';
+            document.getElementById(elementId).innerHTML =
+              `${label}: <img src="/media/admin/img/${icon}" alt="${r.ok ? 'OK' : 'ERROR'}" />`;
+          } catch(e) {
+            document.getElementById(elementId).innerHTML =
+              `${label}: <img src="/media/admin/img/icon-no.gif" alt="ERROR" />`;
+          }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+          checkHealth('http://localhost:8881/health', 'health-dirmonitor');
+          checkHealth('http://localhost:8882/health', 'health-jobqueue');
+          checkHealth('http://localhost:8883/health', 'health-webserver');
+        });
+      </script>
     {% include "bots/menu.html" %}
 {% endif %}
 <div id="container">
