@@ -46,8 +46,8 @@
         }
         window.addEventListener('DOMContentLoaded', () => {
           checkHealth('http://localhost:8881/health', 'health-dirmonitor');
-          checkHealth('http://localhost:8882/health', 'health-jobqueue');
-          checkHealth('http://localhost:8883/health', 'health-webserver');
+          checkHealth('http://localhost:8883/health', 'health-jobqueue');
+          checkHealth('http://localhost:8882/health', 'health-webserver');
         });
       </script>
     {% include "bots/menu.html" %}
